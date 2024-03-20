@@ -12,7 +12,7 @@ using WebApi.Entity;
 namespace WebApi.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240319180850_Initial")]
+    [Migration("20240320054919_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -27,21 +27,19 @@ namespace WebApi.Migrations
 
             modelBuilder.Entity("WebApi.Entity.Article", b =>
                 {
-                    b.Property<int>("Code")
+                    b.Property<string>("Code")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("nvarchar(450)");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Code"));
-
-                    b.Property<double>("IVA")
-                        .HasColumnType("float");
+                    b.Property<float>("IVA")
+                        .HasColumnType("real");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("Price")
-                        .HasColumnType("float");
+                    b.Property<float>("Price")
+                        .HasColumnType("real");
 
                     b.HasKey("Code");
 
@@ -62,18 +60,16 @@ namespace WebApi.Migrations
                     b.Property<DateTime>("DateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<double>("Subtotal")
-                        .HasColumnType("float");
+                    b.Property<float>("Subtotal")
+                        .HasColumnType("real");
 
-                    b.Property<double>("Total")
-                        .HasColumnType("float");
+                    b.Property<float>("Total")
+                        .HasColumnType("real");
 
-                    b.Property<double>("TotalIVA")
-                        .HasColumnType("float");
+                    b.Property<float>("TotalIVA")
+                        .HasColumnType("real");
 
                     b.HasKey("BillId");
-
-                    b.HasIndex("CartId");
 
                     b.ToTable("Bills");
                 });
@@ -95,25 +91,28 @@ namespace WebApi.Migrations
 
                     b.HasKey("CartId");
 
-                    b.HasIndex("UserId");
-
                     b.ToTable("ShoppingCarts");
                 });
 
             modelBuilder.Entity("WebApi.Entity.ShoppingCartArticle", b =>
                 {
-                    b.Property<int>("CartId")
+                    b.Property<int>("IdShoppingCartArticle")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("ArticleId")
-                        .HasColumnType("int");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdShoppingCartArticle"));
 
                     b.Property<int>("Amount")
                         .HasColumnType("int");
 
-                    b.HasKey("CartId", "ArticleId");
+                    b.Property<string>("ArticleId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasIndex("ArticleId");
+                    b.Property<int>("CartId")
+                        .HasColumnType("int");
+
+                    b.HasKey("IdShoppingCartArticle");
 
                     b.ToTable("ShoppingCartArticles");
                 });
@@ -152,57 +151,6 @@ namespace WebApi.Migrations
                     b.HasKey("UserId");
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("WebApi.Entity.Bill", b =>
-                {
-                    b.HasOne("WebApi.Entity.ShoppingCart", "ShoppingCart")
-                        .WithMany()
-                        .HasForeignKey("CartId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ShoppingCart");
-                });
-
-            modelBuilder.Entity("WebApi.Entity.ShoppingCart", b =>
-                {
-                    b.HasOne("WebApi.Entity.User", "User")
-                        .WithMany("ShoppingCarts")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("WebApi.Entity.ShoppingCartArticle", b =>
-                {
-                    b.HasOne("WebApi.Entity.Article", "Article")
-                        .WithMany()
-                        .HasForeignKey("ArticleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WebApi.Entity.ShoppingCart", "ShoppingCart")
-                        .WithMany("ShoppingCartArticles")
-                        .HasForeignKey("CartId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Article");
-
-                    b.Navigation("ShoppingCart");
-                });
-
-            modelBuilder.Entity("WebApi.Entity.ShoppingCart", b =>
-                {
-                    b.Navigation("ShoppingCartArticles");
-                });
-
-            modelBuilder.Entity("WebApi.Entity.User", b =>
-                {
-                    b.Navigation("ShoppingCarts");
                 });
 #pragma warning restore 612, 618
         }
